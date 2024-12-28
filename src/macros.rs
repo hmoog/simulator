@@ -113,16 +113,14 @@ macro_rules! define_thread_safe_node {
                         // TODO: set internal flag to indicate that the message is being processed
                         // if flag is set -> queue
 
-                        let my_ctx = $crate::single_threaded::MessageContext::new(ctx, {
+                        let receive_fn: fn(&mut $node_name, $protocol, $crate::GuardedMessageContext<$protocol>) = $receive_body;
+                        receive_fn(node, message, $crate::GuardedMessageContext::new(ctx, {
                             move |ctx| {
                                 println!("[ DONE ] Message From {} To {}", ctx.from(), ctx.to());
                                 // TODO: clear internal flag
                                 // check if there are queued messages and process them
                             }
-                        });
-
-                        let receive_fn: fn(&mut $node_name, $protocol, $crate::single_threaded::MessageContext<$protocol>) = $receive_body;
-                        receive_fn(node, message, my_ctx);
+                        }));
                     }
 
                     thread_safe_handle_message as fn(&mut $node_name, $protocol, $crate::MessageContext<$protocol>)
@@ -148,16 +146,14 @@ macro_rules! define_thread_safe_node {
                     // TODO: set internal flag to indicate that the message is being processed
                     // if flag is set -> queue
 
-                    let my_ctx = $crate::single_threaded::MessageContext::new(ctx, {
+                    let receive_fn: fn(&mut $node_name, $protocol, $crate::GuardedMessageContext<$protocol>) = $receive_body;
+                    receive_fn(node, message, $crate::GuardedMessageContext::new(ctx, {
                         move |ctx| {
                             println!("[ DONE ] Message From {} To {}", ctx.from(), ctx.to());
                             // TODO: clear internal flag
                             // check if there are queued messages and process them
                         }
-                    });
-
-                    let receive_fn: fn(&mut $node_name, $protocol, $crate::single_threaded::MessageContext<$protocol>) = $receive_body;
-                    receive_fn(node, message, my_ctx);
+                    }));
                 }
 
                 thread_safe_handle_message as fn(&mut $node_name, $protocol, $crate::MessageContext<$protocol>)

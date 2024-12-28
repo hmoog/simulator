@@ -1,4 +1,4 @@
-use simulator::single_threaded::{define_thread_safe_node, Network};
+use simulator::{define_thread_safe_node, Network};
 
 #[derive(Debug, Clone)]
 enum PingPongProtocol { Ping, Pong }
